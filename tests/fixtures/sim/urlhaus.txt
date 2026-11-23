@@ -1,0 +1,14 @@
+#####
+# abuse.ch URLhaus
+#####
+http://payload1.malware-host.test/bin.sh
+http://payload2.malware-host.test/bin.sh
+http://payload3.malware-host.test/bin.sh
+http://payload4.malware-host.test/bin.sh
+http://payload5.malware-host.test/bin.sh
+http://payload6.malware-host.test/bin.sh
+http://payload7.malware-host.test/bin.sh
+http://payload8.malware-host.test/bin.sh
+http://payload9.malware-host.test/bin.sh
+http://payload10.malware-host.test/bin.sh
+http://secure-login1.example-phish.test/also-in-phish

@@ -1,16 +1,28 @@
 {
-  "id": "coolcode-tool-template",
-  "title": "CoolCode Tool Starter",
-  "description": "A browser-only example that trims lines and removes exact duplicates.",
+  "id": "shieldcheck",
+  "title": "Shield Check",
+  "description": "See which filtering DNS services block fresh phishing and malware domains, including CIRA Canadian Shield, and test your own list.",
   "category": "security",
-  "tags": ["text", "lines", "duplicates"],
-  "icon": "scan-search",
-  "url": "/coolcode-tool-template/",
-  "source": "https://github.com/jsdyer/coolcode-tool-template",
+  "tags": [
+    "dns",
+    "cira",
+    "canadian shield",
+    "cloudflare",
+    "quad9",
+    "phishing",
+    "malware",
+    "doh",
+    "protective dns",
+    "filtering"
+  ],
+  "icon": "shield-check",
+  "url": "/shieldcheck/",
+  "source": "https://github.com/jsdyer/shieldcheck",
   "hosting": "project",
   "access": "browser",
   "data_info": {
-    "mode": "local",
-    "detail": "The browser reads the text you paste and compares its lines."
+    "mode": "mixed",
+    "detail": "Six-hourly captures check fresh URLhaus and OpenPhish domains against CIRA, Cloudflare and Quad9; your own list is checked live from your browser.",
+    "cadence": "Every 6 hours"
   }
 }

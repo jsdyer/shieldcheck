@@ -4,6 +4,8 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+  schedule:
+    - cron: '23 */6 * * *'   # every six hours
 permissions:
   contents: read
 jobs:
@@ -26,8 +28,20 @@ jobs:
         run: node --test tests/*.test.mjs
       - name: Test the builder
         run: python3 -m unittest discover -s tests -v
+      - name: Restore earlier captures
+        if: github.event_name != 'pull_request'
+        uses: actions/cache@v4
+        with:
+          path: .cache
+          key: shieldcheck-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: shieldcheck-
+      - name: Take a capture
+        if: github.event_name != 'pull_request'
+        run: node scripts/capture.mjs
       - name: Build the static application
-        run: python3 scripts/build.py
+        run: |
+          python3 scripts/build.py
+          if [ "${{ github.event_name }}" != pull_request ]; then test -s dist/data/index.json; fi
       - name: Check whether the tool has been initialized
         id: identity
         env:

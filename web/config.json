@@ -1,0 +1,61 @@
+{
+  "resolvers": [
+    { "id": "cira-private", "name": "CIRA Canadian Shield · Private", "short": "CIRA Private", "operator": "CIRA", "url": "https://private.canadianshield.cira.ca/dns-query", "role": "baseline" },
+    { "id": "cira-protected", "name": "CIRA Canadian Shield · Protected", "short": "CIRA Protected", "operator": "CIRA", "url": "https://protected.canadianshield.cira.ca/dns-query", "baseline": "cira-private", "level": "security" },
+    { "id": "cira-family", "name": "CIRA Canadian Shield · Family", "short": "CIRA Family", "operator": "CIRA", "url": "https://family.canadianshield.cira.ca/dns-query", "baseline": "cira-private", "level": "family" },
+    { "id": "cloudflare", "name": "Cloudflare 1.1.1.1", "short": "Cloudflare", "operator": "Cloudflare", "url": "https://cloudflare-dns.com/dns-query", "role": "baseline" },
+    { "id": "cloudflare-security", "name": "Cloudflare 1.1.1.2 · Malware", "short": "Cloudflare Malware", "operator": "Cloudflare", "url": "https://security.cloudflare-dns.com/dns-query", "baseline": "cloudflare", "level": "security" },
+    { "id": "cloudflare-family", "name": "Cloudflare 1.1.1.3 · Family", "short": "Cloudflare Family", "operator": "Cloudflare", "url": "https://family.cloudflare-dns.com/dns-query", "baseline": "cloudflare", "level": "family" },
+    { "id": "quad9-unfiltered", "name": "Quad9 9.9.9.10 · Unfiltered", "short": "Quad9 Unfiltered", "operator": "Quad9", "url": "https://dns10.quad9.net/dns-query", "role": "baseline" },
+    { "id": "quad9", "name": "Quad9 9.9.9.9 · Threat blocking", "short": "Quad9", "operator": "Quad9", "url": "https://dns.quad9.net/dns-query", "baseline": "quad9-unfiltered", "level": "security" }
+  ],
+  "feeds": [
+    { "id": "urlhaus", "name": "URLhaus (abuse.ch) online malware URLs", "url": "https://urlhaus.abuse.ch/downloads/text_online/", "kind": "malware", "max_domains": 120 },
+    { "id": "openphish", "name": "OpenPhish community feed", "url": "https://openphish.com/feed.txt", "kind": "phishing", "max_domains": 120 }
+  ],
+  "controls": [
+    "cira.ca",
+    "canada.ca",
+    "cbc.ca",
+    "rbc.com",
+    "td.com",
+    "interac.ca",
+    "canadapost-postescanada.ca",
+    "github.com",
+    "wikipedia.org",
+    "coolcode.ca"
+  ],
+  "skip_suffixes": [
+    "google.com",
+    "googleusercontent.com",
+    "github.com",
+    "githubusercontent.com",
+    "github.io",
+    "microsoft.com",
+    "sharepoint.com",
+    "dropbox.com",
+    "amazonaws.com",
+    "cloudfront.net",
+    "azurewebsites.net",
+    "web.app",
+    "firebaseapp.com",
+    "pages.dev",
+    "workers.dev",
+    "vercel.app",
+    "netlify.app",
+    "glitch.me",
+    "weebly.com",
+    "wixsite.com",
+    "webflow.io",
+    "blogspot.com",
+    "duckdns.org",
+    "ngrok-free.app"
+  ],
+  "sinkhole_min_domains": 3,
+  "concurrency": 6,
+  "timeout_ms": 8000,
+  "keep_captures": 120,
+  "history_days": 45,
+  "min_live_domains": 10,
+  "live_max_domains": 25
+}

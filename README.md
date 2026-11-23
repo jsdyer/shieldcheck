@@ -1,134 +1,66 @@
-# CoolCode browser tool template
+# Shield Check
 
-A starting point for independent tools at `coolcode.ca/<repo>/`: a working local-text
-example, responsive UI, Python standard-library build, Node tests, PR checks and Pages
-publication. No npm install is needed.
+Compare how well filtering DNS services block fresh phishing and malware domains, including CIRA Canadian Shield. Published at **https://coolcode.ca/shieldcheck/**.
 
-## Using the example
+Every six hours a GitHub Actions job takes the newest domains from two public threat feeds and resolves each one through every filtering service and through the same operator's unfiltered service. A domain counts as **blocked** when the filtered service refuses it (NXDOMAIN, an empty answer, or an Extended DNS Error such as "Blocked" or "Filtered") or answers with a block page or null address while the unfiltered service resolves it normally.
+
+| Operator | Unfiltered (baseline) | Filtered |
+|---|---|---|
+| CIRA Canadian Shield | Private | Protected (malware and phishing), Family |
+| Cloudflare | 1.1.1.1 | 1.1.1.2 Malware, 1.1.1.3 Family |
+| Quad9 | 9.9.9.10 | 9.9.9.9 Threat blocking |
+
+Threat feeds: [URLhaus](https://urlhaus.abuse.ch/) (abuse.ch, online malware URLs) and the [OpenPhish](https://openphish.com/) community feed. A control list of well-known legitimate sites catches false positives.
+
+## Reading the results
 
 <!-- coolcode:guide -->
-The first occurrence of each trimmed line keeps its place. Compare the output with the original text before copying the result.
+The scoreboard's block rate counts only domains that still resolved on the operator's unfiltered service, so dead domains don't count against anyone. "Unique" means no other security filter blocked that domain in the same capture. A control-list block is a false positive worth reporting to the provider. "How quickly" tracks domains that first appear in a feed after tracking began and shows how many hours passed before each filter blocked them. Use "Check your own list" to test a suspicious link before you share it. That check runs from your browser, and services that don't accept browser requests show "!".
 <!-- /coolcode:guide -->
 
-For a real tool, replace this paragraph with one or two plain-text sentences
-about an example, a limit or how to interpret the results. Keep the source,
-coverage, refresh behaviour and a worked example in this README as appropriate.
-When updating a tool, revise any details its behaviour has changed and keep the
-homepage's shorter data-source sentence in `tool.json` accurate.
-The hub imports the marked note into the catalogue README.
+- **Sinkholes:** CIRA answers blocked HTTP names with the address of its block page instead of refusing them. Any address that a filtered service returns instead of the baseline answer for several different domains in one capture (`sinkhole_min_domains`, default 3) is treated as a block page. `0.0.0.0`, `::` and private addresses always count as blocks.
+- **Shared platforms** such as Google Docs, GitHub Pages or Cloudflare Pages are skipped, because no DNS filter can block one user's page without blocking everyone's (`skip_suffixes`).
+- Each capture is one DNS lookup per domain per service, made from GitHub's servers. It's a snapshot rather than a benchmark. Providers may answer differently in other regions or as their lists change.
+- Feed domains are shown as plain text, never as links.
 
-## One-time template setup
+## Expand or customize
 
-Enable **Settings → General → Template repository** here. This repository does not
-need Pages enabled: its workflow builds/tests but intentionally skips deployment.
-New copies also skip deployment until `scripts/init.py` sets the tool ID to match
-their repository name. This lets you create the repo before configuring Pages.
+Everything is in **`web/config.json`**:
 
-## Start a new tool
+| Key | Meaning |
+|---|---|
+| `resolvers` | Each DNS-over-HTTPS service: `id`, `name`, `short` (column label), `operator`, `url`, and either `"role": "baseline"` or `"baseline": "<id of its unfiltered sibling>"` with `"level": "security"` or `"family"`. |
+| `feeds` | Threat feeds: `id`, `name`, `url` (one URL or host per line), `kind`, `max_domains` per capture. |
+| `controls` | Legitimate domains that should never be blocked. |
+| `skip_suffixes` | Shared platforms to leave out. |
+| `sinkhole_min_domains`, `concurrency`, `timeout_ms` | Detection threshold and query limits. |
+| `keep_captures` (default 120 = 30 days), `history_days` | Retention. |
+| `min_live_domains` | A capture with fewer live feed domains than this is rejected and not published. |
+| `live_max_domains` | Cap on the in-browser check. |
 
-1. Select **Use this template → Create a new repository**, choose owner `jsdyer`,
-   a unique lowercase name such as `my-tool`, and public visibility.
-2. Clone the new repository. Use Python 3.12+ and Node 24+.
-3. Set the identity, using a slug that matches the repository name:
+To add a service, append it to `resolvers` and point `baseline` at an unfiltered sibling (add one if needed). For example:
 
-```sh
-python3 scripts/init.py my-tool --title "My Tool" --description "Describe what this tool does."
+```json
+{ "id": "adguard", "name": "AdGuard DNS · Default", "short": "AdGuard", "operator": "AdGuard",
+  "url": "https://dns.adguard-dns.com/dns-query", "baseline": "adguard-unfiltered", "level": "security" }
 ```
 
-Review the category, tags and icon in `tool.json`. `access: "browser"` tells the main
-catalogue that the tool works immediately without installation. `--owner` supports a different
-GitHub owner, but only projects owned by `jsdyer` inherit the CoolCode domain.
+No code changes are needed (`tests/model.test.mjs` covers an extra resolver). Configuration changes apply from the next capture. Earlier captures keep the services and feeds they were taken with.
 
-4. Replace the example in `web/` and its tests. Update the privacy explanation,
-   source attribution and README to describe the real tool.
-5. Test and preview:
+**Refresh and publish:** a push to `main` runs the tests, takes a capture and deploys. Scheduled runs repeat every six hours. To capture without pushing, use **Actions → Browser tool · Check and publish → Run workflow**. If no feed domains resolve, or every unfiltered service fails, the run stops and the last good deployment stays live. Captures and the block-time history persist in the Actions cache.
+
+## Develop and test
 
 ```sh
 node --test tests/*.test.mjs
 python3 -m unittest discover -s tests -v
+node scripts/capture.mjs --fixtures tests/fixtures/sim --now 2026-11-23T18:00:00Z   # offline capture
 python3 scripts/build.py
 python3 -m http.server 8000 --directory dist
 ```
 
-Open `http://localhost:8000/`. The example trims lines, skips blanks and removes exact
-duplicates, preserving first-seen order and capitalization. It processes the text in tab memory. Update that explanation if your app behaves differently.
+`tests/fixtures/sim/` holds feed text and simulated resolver answers for each service's blocking style. `tests/browser_smoke.py` serves the build at `/shieldcheck/` and simulates the DNS services, including CIRA refusing browser requests.
 
-CI also tests the browser flow and mobile layout at a project subpath. Replace the
-sample assertions in `tests/browser_smoke.py` when implementing your own UI. To run
-that check locally (optional for ordinary preview):
+## Publish
 
-```sh
-python3 -m venv .venv
-. .venv/bin/activate
-python3 -m pip install -r tests/browser-requirements.txt
-python3 -m playwright install --with-deps chromium
-python3 tests/browser_smoke.py
-```
-
-Playwright is a test-only dependency; the app and its static build do not use it.
-
-## Expand or customize
-
-Every implemented tool should replace this section with its actual configuration
-path and a working example. A small `config.json` can hold default entities,
-query presets, source choices and request limits. Those defaults should be useful
-starting points, while visitors can enter other valid inputs whenever the source
-supports them. Keep provider limits explicit and separate from the starter list.
-
-Derive counts, filters and item validation from the current data. Do not require
-exactly the initial number of items. Add a test that expands the configuration,
-and keep historical captures readable when their coverage differs from today's
-watchlist. Display the selected capture date accurately.
-
-Document which changes need only a normal code push and which also need a data
-refresh. Include the refresh command or exact GitHub workflow and input, followed
-by the publication step. A successful code build need not mean a new collection
-has been fetched. The starter itself has no external collection or refresh.
-
-## Publish and register
-
-When the actual tool is ready, in the **new tool repository** set **Settings → Pages → Build and deployment →
-Source → GitHub Actions**. Push to `main`, or manually run **Browser tool · Check and
-publish** after enabling Pages. If the initial deployment ran before Pages was enabled,
-enable it and rerun. PRs only check/build and provide a downloadable preview artifact.
-
-Keep `{{VISIT_COUNTER}}` in the page head and `{{ISSUE_LINK}}` in the footer when replacing the starter UI. The build enables these for initialized CoolCode repositories. The shared counter records aggregate opens on coolcode.ca by public tool ID. Toolbox inputs and URL parameters are excluded. The issue link opens a reporting form with the tool already selected.
-
-Keep app-owned asset paths and module imports relative. Check `https://coolcode.ca/my-tool/`.
-Do not add a CNAME or set `coolcode.ca` as this project's custom domain; the account
-site supplies it. Only successful `main` builds deploy.
-
-After verifying the app, copy the reviewed object from `tool.json` into `data/tools.json`
-in [the main site](https://github.com/jsdyer/jsdyer.github.io). Each tool still builds
-independently. Update the hub record when listing metadata changes; the hub is the
-authority for discovery. Ordinary app updates touch only this repository.
-
-The main site separates **Use in your browser** from **Install yourself**. An app
-that asks for a file is still a browser tool. Standalone Linux packages should start
-in their own repositories with their own build/release workflow, rather than copying
-this browser-only scaffold. Their hub record uses `access: "install"`, links to an
-installation guide, and includes `requirements`.
-
-## Files
-
-| Path | Purpose |
-| --- | --- |
-| `tool.json` | Page metadata and a ready-to-copy catalogue record |
-| `web/` | HTML, responsive CSS, DOM interactions and separate model logic |
-| `scripts/build.py` | Escape metadata and build `web/` into `dist/` |
-| `scripts/init.py` | Set a new project's identity |
-| `tests/` | Application and builder tests |
-| `.github/workflows/pages.yml` | Check PRs and publish successful main builds |
-| `AGENTS.md` | Instructions for future coding work |
-
-Namespace optional storage as `coolcode:<tool-id>:<key>`; CoolCode paths share a
-browser origin. Don't save pasted text/uploads by default. Document external APIs
-and send only the information needed for the selected action. Never embed secrets.
-
-Scheduled refresh is opt-in. Validate source data before deploying, display its date,
-and preserve the last good deployment on failure. Public-repository schedules can
-stop after 60 days without repository activity.
-
-Templates don't propagate future edits automatically. Adopt fixes explicitly and
-consider a versioned reusable workflow once several tools confirm the shared process.
-Choose and add the intended software license before distributing a new project.
+Settings → Pages → Source → **GitHub Actions**. GitHub pauses schedules in public repositories after 60 days without activity; run the workflow by hand to resume.

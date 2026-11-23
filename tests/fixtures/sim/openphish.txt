@@ -1,0 +1,20 @@
+https://secure-login1.example-phish.test/interac/verify?id=1
+https://secure-login2.example-phish.test/interac/verify?id=2
+https://secure-login3.example-phish.test/interac/verify?id=3
+https://secure-login4.example-phish.test/interac/verify?id=4
+https://secure-login5.example-phish.test/interac/verify?id=5
+https://secure-login6.example-phish.test/interac/verify?id=6
+https://secure-login7.example-phish.test/interac/verify?id=7
+https://secure-login8.example-phish.test/interac/verify?id=8
+https://secure-login9.example-phish.test/interac/verify?id=9
+https://secure-login10.example-phish.test/interac/verify?id=10
+https://secure-login11.example-phish.test/interac/verify?id=11
+https://secure-login12.example-phish.test/interac/verify?id=12
+https://secure-login13.example-phish.test/interac/verify?id=13
+https://secure-login14.example-phish.test/interac/verify?id=14
+https://docs.google.com/forms/d/abc
+https://phish-dupe1.test/a
+https://phish-dupe1.test/b
+192.0.2.55/login
+# comment
+not a url at all !!

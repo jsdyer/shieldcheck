@@ -13,21 +13,62 @@
   <a class="skip" href="#main">Skip to content</a>
   <header><a href="https://coolcode.ca/">← CoolCode.ca</a><a href="{{SOURCE_URL}}">Source &amp; instructions ↗</a></header>
   <main id="main">
-    <p class="eyebrow">Browser tool starter</p>
+    <p class="eyebrow">Security &amp; forensics · protective DNS, compared</p>
     <h1>{{TITLE}}</h1>
     <p class="intro">{{DESCRIPTION}}</p>
-    <section aria-labelledby="example-title">
-      <h2 id="example-title">Clean a list</h2>
-      <p>Trim spaces, skip blank lines and remove exact duplicates. Capitalization stays distinct.</p>
-      <div class="panels">
-        <div><label for="input">Your lines</label><textarea id="input" rows="10" maxlength="100000" spellcheck="false" placeholder="Paste one item per line"></textarea></div>
-        <div><label for="output">Cleaned lines</label><textarea id="output" rows="10" readonly spellcheck="false"></textarea></div>
-      </div>
-      <div class="actions"><button id="sample" type="button">Load example</button><button id="clear" type="button">Clear</button><button id="copy" type="button" hidden>Copy result</button></div>
-      <p id="status" role="status" aria-live="polite">Paste a list to begin.</p>
-      <noscript><p>This tool needs JavaScript to process your text. The source is available above.</p></noscript>
+
+    <div class="capture-bar">
+      <label for="capture">Capture</label>
+      <select id="capture" disabled><option>Loading…</option></select>
+      <p id="capture-note" role="status" aria-live="polite"></p>
+    </div>
+    <noscript><p>This tool needs JavaScript to display captures and run checks.</p></noscript>
+
+    <section aria-labelledby="score-title">
+      <h2 id="score-title">Scoreboard</h2>
+      <p class="lede" id="score-lede"></p>
+      <div id="scoreboard"></div>
+      <p class="small">The block rate counts only domains that still resolve on the same operator's unfiltered service; dead domains are left out. "Unique" means no other security-level filter blocked it in this capture. Family filters are shown separately, because they also block adult content.</p>
     </section>
-    <aside aria-label="Privacy"><strong>Stays on your device.</strong> The browser processes your text in this tab. Reloading clears it.</aside>
+
+    <section aria-labelledby="speed-title">
+      <h2 id="speed-title">How quickly new threats get blocked</h2>
+      <p class="lede" id="speed-lede"></p>
+      <div class="table-wrap"><table id="speed"></table></div>
+    </section>
+
+    <section aria-labelledby="domains-title">
+      <h2 id="domains-title">Every domain in this capture</h2>
+      <div class="filters">
+        <label for="filter">Show</label>
+        <select id="filter">
+          <option value="all">All threat domains</option>
+          <option value="missed">Live, blocked by no security filter</option>
+          <option value="unique">Blocked by exactly one security filter</option>
+          <option value="controls">Control list (should never be blocked)</option>
+          <option value="offline">Already offline</option>
+        </select>
+        <input id="search" type="search" placeholder="Filter by name" aria-label="Filter domains by name" maxlength="100">
+        <span id="count" class="small" role="status" aria-live="polite"></span>
+      </div>
+      <div class="table-wrap"><table id="domains" class="grid"></table></div>
+      <p class="legend"><span><b class="v blocked">■</b> blocked</span><span><b class="v allowed">·</b> resolves</span><span><b class="v offline">–</b> dead everywhere</span><span><b class="v error">!</b> query failed</span></p>
+      <p class="small">Domain names are shown as plain text and are not links. These are live phishing and malware sites; don't visit them.</p>
+    </section>
+
+    <section aria-labelledby="live-title">
+      <h2 id="live-title">Check your own list</h2>
+      <p>Enter up to <span id="live-max">25</span> domains or URLs, one per line. Your browser asks each resolver directly, using DNS over HTTPS.</p>
+      <form id="live-form">
+        <label for="live-input">Domains</label>
+        <textarea id="live-input" rows="5" spellcheck="false" placeholder="example.com&#10;https://suspicious.example/login"></textarea>
+        <div class="actions"><button type="submit">Check now</button><button type="button" id="live-clear" class="quiet-btn">Clear</button></div>
+      </form>
+      <p id="live-status" role="status" aria-live="polite"></p>
+      <div class="table-wrap"><table id="live" class="grid"></table></div>
+    </section>
+
+    <aside aria-label="Privacy and sources"><strong>What leaves your browser.</strong> Browsing captures sends nothing anywhere: a scheduled build collected them ahead of time from the URLhaus and OpenPhish feeds and the resolvers listed above. "Check your own list" sends each name you enter to every listed DNS service (CIRA, Cloudflare and Quad9) over HTTPS, and to nobody else. Nothing is stored. Some services may not answer browser requests; those cells show "!" and the scheduled captures still cover them. A block here only tells you what that DNS service returned. Your own network, browser and device protections apply on top.</aside>
   </main>
   <footer>Part of <a href="https://coolcode.ca/">the CoolCode collection</a>. {{ISSUE_LINK}}</footer>
 </body>
