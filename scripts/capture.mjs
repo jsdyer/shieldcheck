@@ -13,6 +13,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import * as M from '../web/model.mjs';
 import * as DNS from '../web/dns.mjs';
+import { createH2Fetch } from './h2fetch.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const args = process.argv.slice(2);
@@ -34,6 +35,8 @@ const simFetch = async (url) => {
   if (a === 'error') return { ok: false, status: 502 };
   return { ok: true, arrayBuffer: async () => DNS.buildResponse(q, a || { rcode: 3 }) };
 };
+
+const h2Fetch = createH2Fetch({ headers: { 'user-agent': UA['User-Agent'] } });
 
 async function feedText(feed) {
   if (fixtures) return readFile(path.join(fixtures, `${feed.id}.txt`), 'utf8');
@@ -77,12 +80,13 @@ async function worker() {
   while (next < jobs.length) {
     const { row, r } = jobs[next++];
     let ans;
-    try { ans = await DNS.resolve(r.url, row.domain, { timeout: config.timeout_ms, fetchImpl: fixtures ? simFetch : (u, o) => fetch(u, { ...o, headers: { ...o.headers, ...UA } }) }); }
+    try { ans = await DNS.resolve(r.url, row.domain, { timeout: config.timeout_ms, fetchImpl: fixtures ? simFetch : h2Fetch }); }
     catch (e) { ans = { error: e.name === 'TimeoutError' ? 'timeout' : e.message }; }
     row.answers[r.id] = M.summarizeAnswer(ans);
   }
 }
 await Promise.all(Array.from({ length: config.concurrency }, worker));
+h2Fetch.close();
 
 // 3. Classify and summarise.
 const resolvers = config.resolvers.map(({ id, name, short, operator, role, baseline, level }) => ({ id, name, short, operator, role, baseline, level }));

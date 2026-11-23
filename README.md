@@ -22,7 +22,7 @@ The scoreboard's block rate counts only domains that still resolved on the opera
 
 - **Sinkholes:** CIRA answers blocked HTTP names with the address of its block page instead of refusing them. Any address that a filtered service returns instead of the baseline answer for several different domains in one capture (`sinkhole_min_domains`, default 3) is treated as a block page. `0.0.0.0`, `::` and private addresses always count as blocks.
 - **Shared platforms** such as Google Docs, GitHub Pages or Cloudflare Pages are skipped, because no DNS filter can block one user's page without blocking everyone's (`skip_suffixes`).
-- Each capture is one DNS lookup per domain per service, made from GitHub's servers. It's a snapshot rather than a benchmark. Providers may answer differently in other regions or as their lists change.
+- Each capture is one DNS lookup per domain per service over HTTP/2 (CIRA and Quad9 refuse HTTP/1.1), made from GitHub's servers. It's a snapshot rather than a benchmark. Providers may answer differently in other regions or as their lists change.
 - Feed domains are shown as plain text, never as links.
 
 ## Expand or customize
