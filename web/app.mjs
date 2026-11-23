@@ -86,7 +86,7 @@ function renderDomains() {
 async function show(id) {
   $('#capture-note').textContent = 'Loading…';
   try { capture = await getJson(`./data/captures/${encodeURIComponent(id)}.json`); } catch { $('#capture-note').textContent = `Couldn't load capture ${id}.`; return; }
-  const feeds = Object.entries(capture.feeds).map(([k, v]) => `${k} ${v.status === 'ok' ? `(${v.domains})` : 'unavailable'}`).join(', ');
+  const feeds = Object.entries(capture.feeds).map(([k, v]) => `${k} ${v.status === 'ok' ? `(${v.domains})` : `unavailable: ${v.status}`}`).join(', ');
   $('#capture-note').textContent = `Checked ${when(capture.captured)} · feeds: ${feeds}`;
   renderScore(); renderSpeed(); renderDomains();
   try { const u = new URL(location.href); u.searchParams.set('capture', id); history.replaceState(null, '', u); } catch { /* ignore */ }

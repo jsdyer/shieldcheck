@@ -53,3 +53,10 @@ test('feeds that fail entirely leave nothing published and exit non-zero', () =>
   assert.match(r.stderr, /keeping the last good deployment/);
   assert.throws(() => readdirSync(out));
 });
+
+test('keyed feeds name their secret, and no key is stored in config.json', () => {
+  const dir = mkdtempSync(path.join(tmpdir(), 'shield-'));
+  const cfg = JSON.parse(readFileSync(path.join(ROOT, 'web', 'config.json'), 'utf8'));
+  assert.equal(cfg.feeds.find((f) => f.id === 'urlhaus').secret, 'ABUSECH_AUTH_KEY');
+  assert.ok(!JSON.stringify(cfg).match(/[0-9a-f]{40,}/), 'no keys in config');
+});

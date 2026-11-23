@@ -37,8 +37,15 @@ const simFetch = async (url) => {
 
 async function feedText(feed) {
   if (fixtures) return readFile(path.join(fixtures, `${feed.id}.txt`), 'utf8');
-  const res = await fetch(feed.url, { headers: UA, signal: AbortSignal.timeout(30000) });
-  if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
+  let url = feed.url;
+  if (feed.secret) {
+    // Keys go in a repository secret, never in config.json: e.g. ABUSECH_AUTH_KEY for URLhaus.
+    const key = process.env[feed.secret];
+    if (!key) throw new Error(`needs the ${feed.secret} repository secret`);
+    url = url.replace(`{${feed.secret}}`, encodeURIComponent(key));
+  }
+  const res = await fetch(url, { headers: UA, signal: AbortSignal.timeout(30000) });
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
   return res.text();
 }
 

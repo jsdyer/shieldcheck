@@ -10,7 +10,9 @@ Every six hours a GitHub Actions job takes the newest domains from two public th
 | Cloudflare | 1.1.1.1 | 1.1.1.2 Malware, 1.1.1.3 Family |
 | Quad9 | 9.9.9.10 | 9.9.9.9 Threat blocking |
 
-Threat feeds: [URLhaus](https://urlhaus.abuse.ch/) (abuse.ch, online malware URLs) and the [OpenPhish](https://openphish.com/) community feed. A control list of well-known legitimate sites catches false positives.
+Threat feeds: the [OpenPhish](https://openphish.com/) community feed and [URLhaus](https://urlhaus.abuse.ch/) (abuse.ch, recent malware URLs). A control list of well-known legitimate sites catches false positives.
+
+**URLhaus needs a free abuse.ch key.** Create an account at https://auth.abuse.ch/, generate an Auth-Key, and save it in this repository under **Settings → Secrets and variables → Actions → New repository secret** as `ABUSECH_AUTH_KEY`. Without it, captures still run on OpenPhish alone and the capture note says the URLhaus feed needs the key.
 
 ## Reading the results
 
@@ -30,7 +32,7 @@ Everything is in **`web/config.json`**:
 | Key | Meaning |
 |---|---|
 | `resolvers` | Each DNS-over-HTTPS service: `id`, `name`, `short` (column label), `operator`, `url`, and either `"role": "baseline"` or `"baseline": "<id of its unfiltered sibling>"` with `"level": "security"` or `"family"`. |
-| `feeds` | Threat feeds: `id`, `name`, `url` (one URL or host per line), `kind`, `max_domains` per capture. |
+| `feeds` | Threat feeds: `id`, `name`, `url` (plain lists with one URL or host per line, or CSV with a URL column), `kind`, `max_domains` per capture, and optional `secret`: the name of a repository secret substituted for `{NAME}` in the URL. Add it to the workflow's `env:` too. |
 | `controls` | Legitimate domains that should never be blocked. |
 | `skip_suffixes` | Shared platforms to leave out. |
 | `sinkhole_min_domains`, `concurrency`, `timeout_ms` | Detection threshold and query limits. |

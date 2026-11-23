@@ -10,7 +10,7 @@
     { "id": "quad9", "name": "Quad9 9.9.9.9 · Threat blocking", "short": "Quad9", "operator": "Quad9", "url": "https://dns.quad9.net/dns-query", "baseline": "quad9-unfiltered", "level": "security" }
   ],
   "feeds": [
-    { "id": "urlhaus", "name": "URLhaus (abuse.ch) online malware URLs", "url": "https://urlhaus.abuse.ch/downloads/text_online/", "kind": "malware", "max_domains": 120 },
+    { "id": "urlhaus", "name": "URLhaus (abuse.ch) recent malware URLs", "url": "https://urlhaus-api.abuse.ch/v2/files/exports/{ABUSECH_AUTH_KEY}/recent.csv", "kind": "malware", "max_domains": 120, "secret": "ABUSECH_AUTH_KEY" },
     { "id": "openphish", "name": "OpenPhish community feed", "url": "https://openphish.com/feed.txt", "kind": "phishing", "max_domains": 120 }
   ],
   "controls": [

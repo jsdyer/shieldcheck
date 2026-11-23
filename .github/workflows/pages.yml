@@ -37,6 +37,8 @@ jobs:
           restore-keys: shieldcheck-
       - name: Take a capture
         if: github.event_name != 'pull_request'
+        env:
+          ABUSECH_AUTH_KEY: ${{ secrets.ABUSECH_AUTH_KEY }}
         run: node scripts/capture.mjs
       - name: Build the static application
         run: |

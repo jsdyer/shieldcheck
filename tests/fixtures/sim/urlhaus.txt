@@ -1,14 +1,14 @@
-#####
-# abuse.ch URLhaus
-#####
-http://payload1.malware-host.test/bin.sh
-http://payload2.malware-host.test/bin.sh
-http://payload3.malware-host.test/bin.sh
-http://payload4.malware-host.test/bin.sh
-http://payload5.malware-host.test/bin.sh
-http://payload6.malware-host.test/bin.sh
-http://payload7.malware-host.test/bin.sh
-http://payload8.malware-host.test/bin.sh
-http://payload9.malware-host.test/bin.sh
-http://payload10.malware-host.test/bin.sh
-http://secure-login1.example-phish.test/also-in-phish
+################################################################
+# abuse.ch URLhaus Database Dump (CSV - recent URLs only)
+# id,dateadded,url,url_status,last_online,threat,tags,urlhaus_link,reporter
+"3000001","2026-11-23 10:00:00","http://payload1.malware-host.test/bin.sh","online","2026-11-23 11:00:00","malware_download","elf,mirai","https://urlhaus.abuse.ch/url/3000001/","reporter"
+"3000002","2026-11-23 10:00:00","http://payload2.malware-host.test/bin.sh","online","2026-11-23 11:00:00","malware_download","elf,mirai","https://urlhaus.abuse.ch/url/3000002/","reporter"
+"3000003","2026-11-23 10:00:00","http://payload3.malware-host.test/bin.sh","online","2026-11-23 11:00:00","malware_download","elf,mirai","https://urlhaus.abuse.ch/url/3000003/","reporter"
+"3000004","2026-11-23 10:00:00","http://payload4.malware-host.test/bin.sh","online","2026-11-23 11:00:00","malware_download","elf,mirai","https://urlhaus.abuse.ch/url/3000004/","reporter"
+"3000005","2026-11-23 10:00:00","http://payload5.malware-host.test/bin.sh","online","2026-11-23 11:00:00","malware_download","elf,mirai","https://urlhaus.abuse.ch/url/3000005/","reporter"
+"3000006","2026-11-23 10:00:00","http://payload6.malware-host.test/bin.sh","online","2026-11-23 11:00:00","malware_download","elf,mirai","https://urlhaus.abuse.ch/url/3000006/","reporter"
+"3000007","2026-11-23 10:00:00","http://payload7.malware-host.test/bin.sh","online","2026-11-23 11:00:00","malware_download","elf,mirai","https://urlhaus.abuse.ch/url/3000007/","reporter"
+"3000008","2026-11-23 10:00:00","http://payload8.malware-host.test/bin.sh","online","2026-11-23 11:00:00","malware_download","elf,mirai","https://urlhaus.abuse.ch/url/3000008/","reporter"
+"3000009","2026-11-23 10:00:00","http://payload9.malware-host.test/bin.sh","online","2026-11-23 11:00:00","malware_download","elf,mirai","https://urlhaus.abuse.ch/url/3000009/","reporter"
+"3000010","2026-11-23 10:00:00","http://payload10.malware-host.test/bin.sh","online","2026-11-23 11:00:00","malware_download","elf,mirai","https://urlhaus.abuse.ch/url/3000010/","reporter"
+"3000011","2026-11-23 10:00:00","http://secure-login1.example-phish.test/also-in-phish","online","2026-11-23 11:00:00","malware_download","elf,mirai","https://urlhaus.abuse.ch/url/3000011/","reporter"

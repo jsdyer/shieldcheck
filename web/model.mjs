@@ -24,7 +24,10 @@ export function parseFeed(text, { max = Infinity, skip = [] } = {}) {
   const seen = new Set();
   let skipped = 0;
   for (const line of String(text).split(/\r?\n/)) {
-    const host = hostOf(line);
+    if (line.trimStart().startsWith('#')) continue;
+    // Plain lists hold one URL or host per line; CSV exports hold the URL in one quoted column.
+    const url = line.match(/https?:\/\/[^\s",]+/i)?.[0];
+    const host = hostOf(url || line);
     if (!host || seen.has(host)) continue;
     seen.add(host);
     if (matchesSuffix(host, skip)) { skipped++; continue; }

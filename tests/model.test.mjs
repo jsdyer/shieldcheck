@@ -110,3 +110,8 @@ test('config: every filtered resolver has a baseline; an added resolver works wi
   assert.equal(s.find((x) => x.id === 'adguard').blocked, 1);
   assert.ok(config.feeds.every((f) => f.max_domains > 0));
 });
+
+test('URLhaus CSV export: the URL column is used, not the urlhaus_link column', () => {
+  const csv = '# id,dateadded,url,url_status\r\n"1","2026-11-23","http://evil.example-bad.test/x.sh","online","https://urlhaus.abuse.ch/url/1/"\r\n';
+  assert.deepEqual(M.parseFeed(csv).hosts, ['evil.example-bad.test']);
+});
